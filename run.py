@@ -2,9 +2,8 @@ from flask import Flask, render_template, redirect
 from pymongo import MongoClient
 from classes import *
 
-# config system
 app = Flask(__name__)
-app.config.update(dict(SECRET_KEY='yoursecretkey'))
+app.config.update(dict(SECRET_KEY='SECRET'))
 client = MongoClient('localhost:27017')
 db = client.TaskManager
 
@@ -66,13 +65,11 @@ def resetTask(form):
 
 @app.route('/', methods=['GET','POST'])
 def main():
-    # create form
     cform = CreateTask(prefix='cform')
     dform = DeleteTask(prefix='dform')
     uform = UpdateTask(prefix='uform')
     reset = ResetTask(prefix='reset')
 
-    # response
     if cform.validate_on_submit() and cform.create.data:
         return createTask(cform)
     if dform.validate_on_submit() and dform.delete.data:
@@ -82,7 +79,6 @@ def main():
     if reset.validate_on_submit() and reset.reset.data:
         return resetTask(reset)
 
-    # read all data
     docs = db.tasks.find()
     data = []
     for i in docs:
